@@ -32,7 +32,7 @@ const checkGivenUrls = async (host, urlsToCheck, mobile) => {
       'user-agent':
         agent === 'mobile' ? 'gepur-telegram-mobile' : 'gepur-telegram',
     },
-  };
+  };  
 
   urlsToCheck.forEach(async (url) => {
     const targetUrl = `https://${host}${url.link}`;
@@ -60,9 +60,12 @@ const checkGivenUrls = async (host, urlsToCheck, mobile) => {
   });
 };
 
+const findChat = id => chatIds.find((element) => element.id === id);
+
 
 const checkSite = async (url) => {
   console.log('check...');
+  console.log(chatIds);
 
   // desktop
   checkGivenUrls(testDomain, urlsToCheck, false);
@@ -75,20 +78,22 @@ const checkSite = async (url) => {
 
 bot.onText(/\/start (.+)/, (msg, match) => {
   const resp = match[1]; // the captured "whatever"
+  const chatId = msg.chat.id;
 
   if (resp === startPin) {
     bot.sendMessage(msg.chat.id, `Начинаем следить за сайтом ${testDomain}`);
     bot.sendMessage(msg.chat.id, msg.chat.id);
-    chatIds.push({ id: msg.chat.id });
-  } else {
-    bot.sendMessage(msg.chat.id, `Не могу найти сайт ${resp}`);
-  }
+    if (!findChat(chatId)) {
+      chatIds.push({ id: chatId });
+    }
+  } 
 });
 
 bot.onText(/\/stop/, (msg, match) => {
   const resp = match[1]; // the captured "whatever"
 
-  const chat = chatIds.find((element) => element.id === msg.chat.id);
+  const chat = findChat(msg.chat.id);
+
   if (chat) {
     chat.id = 0;
   }
