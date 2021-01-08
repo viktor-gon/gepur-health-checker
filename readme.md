@@ -1,3 +1,2 @@
 To run use:
-npm i
-nodemon -r esm src/bot.js
+npm i && nodemon -r esm src/bot.js
