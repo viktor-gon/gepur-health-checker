@@ -1,8 +1,11 @@
-require('dotenv').config()
+require('dotenv').config();
 
 import { checkUrl } from './helpers/index';
-import { chatIds } from './constants/chat-id';
+import { chatIds as chatIdsDefault } from './constants/chat-id';
 import { urlsToCheck, Target } from './constants/urls';
+import { saveDataJSON, getDataJSON } from './helpers/json-fs';
+
+const chatIds = getDataJSON() || chatIdsDefault;
 
 const testDomain = 'gepur.com';
 const minutesInterval = 2;
@@ -32,7 +35,7 @@ const checkGivenUrls = async (host, urlsToCheck, mobile) => {
       'user-agent':
         agent === 'mobile' ? 'gepur-telegram-mobile' : 'gepur-telegram',
     },
-  };  
+  };
 
   urlsToCheck.forEach(async (url) => {
     const targetUrl = `https://${host}${url.link}`;
@@ -60,10 +63,9 @@ const checkGivenUrls = async (host, urlsToCheck, mobile) => {
   });
 };
 
-const findChat = id => chatIds.find((element) => element.id === id);
+const findChat = (id) => chatIds.find((element) => element.id === id);
 
-
-const checkSite = async (url) => {
+const checkSite = async (testDomain) => {
   console.log('check...');
   console.log(chatIds);
 
@@ -73,7 +75,7 @@ const checkSite = async (url) => {
   // mobile
   checkGivenUrls(testDomain, urlsToCheck, true);
 
-  setTimeout(() => checkSite(url), 60000 * minutesInterval);
+  setTimeout(() => checkSite(testDomain), 60000 * minutesInterval);
 };
 
 bot.onText(/\/start (.+)/, (msg, match) => {
@@ -84,9 +86,12 @@ bot.onText(/\/start (.+)/, (msg, match) => {
     bot.sendMessage(msg.chat.id, `Начинаем следить за сайтом ${testDomain}`);
     bot.sendMessage(msg.chat.id, msg.chat.id);
     if (!findChat(chatId)) {
-      chatIds.push({ id: chatId });
+      const name = `${msg.from.first_name} ${msg.from.last_name}`;
+      console.log(name);
+      chatIds.push({ id: chatId, name });
+      saveDataJSON(chatIds);
     }
-  } 
+  }
 });
 
 bot.onText(/\/stop/, (msg, match) => {
@@ -96,9 +101,10 @@ bot.onText(/\/stop/, (msg, match) => {
 
   if (chat) {
     chat.id = 0;
+    saveDataJSON(chatIds.filter(chat => chat.id));
   }
 
   bot.sendMessage(msg.chat.id, `Перестаем следить за сайтом ${testDomain}`);
 });
 
-checkSite(`http://${testDomain}`);
+checkSite(testDomain);
