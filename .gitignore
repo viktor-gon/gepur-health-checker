@@ -1,3 +1,4 @@
 node_modules
 .env
 data/chat-id-json.raw
+.idea
