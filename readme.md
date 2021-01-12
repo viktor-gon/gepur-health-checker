@@ -1,7 +1,7 @@
-To run use:
+#To run:
 npm i && nodemon -r esm src/bot.js
 
-restart:
+#restart:
 supervisorctl restart health-checker
 
 #supervisor:
