@@ -1,4 +1,4 @@
 node_modules
 .env
-data/chat-id-json.raw
+src/data/chat-id-json.raw
 .idea

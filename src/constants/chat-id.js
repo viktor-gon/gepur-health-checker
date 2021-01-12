@@ -1,10 +1,10 @@
 export const chatIds = [
     {
         id: 1034611868,
-        name: 'Viktor Hocnharuk - Def',
+        name: 'Viktor Hocnharuk',
     },
-    // {
-    //     id: 568548214,
-    //     name: 'Natalya Barday',
-    // }
+    {
+        id: 568548214,
+        name: 'Natalya Barday',
+    }
 ]
