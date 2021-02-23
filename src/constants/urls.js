@@ -54,4 +54,12 @@ export const urlsToCheck = [
     link: '/product/plate-37638',
     target: TargetBoth,
   },
+  {
+    link: '/product/korobka-37196',
+    target: TargetBoth,
+  },
+  {
+    link: '/product/plate-18736',
+    target: TargetBoth,
+  },
 ];

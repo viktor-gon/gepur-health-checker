@@ -8,7 +8,7 @@ import {saveDataJSON, getDataJSON} from './helpers/json-fs';
 const chatIds = getDataJSON() || chatIdsDefault;
 
 const testDomain = 'gepur.com';
-const minutesInterval = 2;
+const minutesInterval = 5;
 
 const TelegramBot = require('node-telegram-bot-api');
 
@@ -21,7 +21,7 @@ const bot = new TelegramBot(token, {polling: true});
 
 const sendMessageToAllChats = (message) => {
     chatIds.forEach((chat) => {
-        if (chat.id) {
+        if (chat.id && chat.pause !== true) {
             bot.sendMessage(chat.id, message);
         }
     });
@@ -99,8 +99,6 @@ bot.onText(/\/status/, (msg, match) => {
 });
 
 bot.onText(/\/stop/, (msg, match) => {
-    const resp = match[1]; // the captured "whatever"
-
     const chat = findChat(msg.chat.id);
 
     if (chat) {
@@ -109,6 +107,26 @@ bot.onText(/\/stop/, (msg, match) => {
     }
 
     bot.sendMessage(msg.chat.id, `Перестаем следить за сайтом ${testDomain}`);
+});
+
+bot.onText(/\/pause/, (msg, match) => {
+    const chat = findChat(msg.chat.id);
+
+    if (chat) {
+        chat.pause = true;
+    }
+
+    bot.sendMessage(msg.chat.id, `Оповещение ${testDomain} поставлено на паузу`);
+});
+
+bot.onText(/\/play/, (msg, match) => {
+    const chat = findChat(msg.chat.id);
+
+    if (chat) {
+        chat.pause = false;
+    }
+
+    bot.sendMessage(msg.chat.id, `Продолжаем следить за ${testDomain}`);
 });
 
 checkSite(testDomain);
