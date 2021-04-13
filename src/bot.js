@@ -58,7 +58,7 @@ const checkGivenUrls = async (host, urlsToCheck, mobile) => {
             }
         } catch (err) {
             console.error('error:', targetUrl, agent);
-            sendMessageToAllChats(`${targetUrl} ${err} ${agent}`);
+            // sendMessageToAllChats(`${targetUrl} ${err} ${agent}`);
         }
     });
 };
